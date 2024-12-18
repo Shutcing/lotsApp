@@ -56,17 +56,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 const tg = window.Telegram.WebApp;
 
-if (tg && tg.initDataUnsafe) {
-  const user = tg.initDataUnsafe.user;
-  if (user) {
-    data = await fetchGetInfo(user.id, LOT_ID);
-    document.getElementById(
-      "user-info"
-    ).innerText = `${data[0]} ${data[1]} ${data[2]}`;
+(async () => {
+  if (tg && tg.initDataUnsafe) {
+    const user = tg.initDataUnsafe.user;
+    if (user) {
+      data = await fetchGetInfo(user.id, LOT_ID);
+      document.getElementById(
+        "user-info"
+      ).innerText = `${data[0]} ${data[1]} ${data[2]}`;
+    } else {
+      document.getElementById("user-info").innerText = "данных нет";
+    }
   } else {
-    document.getElementById("user-info").innerText = "данных нет";
+    document.getElementById("user-info").innerText =
+      "Telegram WebApp не поддерживается.";
   }
-} else {
-  document.getElementById("user-info").innerText =
-    "Telegram WebApp не поддерживается.";
-}
+})();
