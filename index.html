@@ -3,29 +3,17 @@
   <head>
     <title>Telegram Web App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Telegram Web App</h1>
-    <script>
-      // Получение URL-параметра startapp
-      function getStartAppParam() {
-        const params = new URLSearchParams(window.location.search);
-        const startParam = params.get("tgWebAppStartParam");
-        return decodeURIComponent(startParam);
-      }
-
-      // Пример использования
-      document.addEventListener("DOMContentLoaded", () => {
-        const startAppData = getStartAppParam();
-        console.log("Полученные данные из startapp:", startAppData);
-
-        if (startAppData) {
-          const channels = startAppData.split(",");
-          document.body.innerHTML = `<h3>Подписки пользователя:</h3><ul>${startAppData}</ul>`;
-        } else {
-          document.body.innerHTML = "<h3>Данные не получены</h3>";
-        }
-      });
-    </script>
+    <div class="wrapper">
+      <div class="main">
+        <div class="main__gif">
+          <img src="cube.gif" alt="" />
+        </div>
+        <div class="main__text"></div>
+      </div>
+    </div>
   </body>
+  <script src="script.js"></script>
 </html>
