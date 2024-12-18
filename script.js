@@ -1,53 +1,70 @@
-// function strToObject(str) {
-//   const obj = {};
-//   const params = str.split("=");
+let LOT_ID = 0;
 
-//   for (let i = 0; i < params.length - 1; i += 2) {
-//     const key = params[i];
-//     const value = params[i + 1] === "1";
-//     obj[key] = value;
-//   }
+function strToObject(str) {
+  const obj = {};
+  const params = str.split("=");
 
-//   return obj;
-// }
+  for (let i = 0; i < params.length - 1; i += 2) {
+    const key = params[i];
+    const value = params[i + 1] === "1";
+    obj[key] = value;
+  }
 
-// function getStartAppParam() {
-//   const params = new URLSearchParams(window.location.search);
-//   const startParam = params.get("tgWebAppStartParam");
-//   return strToObject(startParam);
-// }
+  return obj;
+}
 
-// let answers = {
-//   join: "🎉 Теперь Вы участвуете в розыгрыше!",
-//   noReq: "📌 Вы ещё не подписались на все нужные каналы!",
-//   end: "❌ Розыгрыш уже завершен!",
-//   already: "✔️ Вы уже участвуете в этом розыгрыше!",
-// };
+async function fetchGetInfo(userId, lotId) {
+  const url = `https://30042283-1417-4aaa-8cea-2f352728861b-00-3koorsgn83t3o.worf.replit.dev/get_info?user_id=${userId}&lot_id=${lotId}`;
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   const startAppData = getStartAppParam();
-//   let text = document.querySelector(".main__text");
-//   if (startAppData.isNew && startAppData.isDoReq && startAppData.isLotActual) {
-//     text.textContent = answers.join;
-//   } else if (!startAppData.isLotActual) {
-//     text.textContent = answers.end;
-//   } else if (!startAppData.isNew) {
-//     text.textContent = answers.already;
-//   } else if (!startAppData.isDoReq) {
-//     text.textContent = answers.noReq;
-//   }
-// });
+  try {
+    const response = await fetch(url, {
+      method: "GET", // Метод запроса
+      headers: {
+        "Content-Type": "application/json", // Указываем формат
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+
+    const data = await response.json(); // Парсим JSON-ответ
+    console.log("Ответ сервера:", data);
+    return data;
+  } catch (error) {
+    console.error("Ошибка при выполнении запроса:", error);
+  }
+}
+
+function getStartAppParam() {
+  const params = new URLSearchParams(window.location.search);
+  const startParam = params.get("tgWebAppStartParam");
+  return int(startParam);
+}
+
+let answers = {
+  join: "🎉 Теперь Вы участвуете в розыгрыше!",
+  noReq: "📌 Вы ещё не подписались на все нужные каналы!",
+  end: "❌ Розыгрыш уже завершен!",
+  already: "✔️ Вы уже участвуете в этом розыгрыше!",
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const startAppData = getStartAppParam();
+  LOT_ID = startAppData;
+});
 
 const tg = window.Telegram.WebApp;
 
 if (tg && tg.initDataUnsafe) {
   const user = tg.initDataUnsafe.user;
   if (user) {
-    const userInfo = `ID: ${user.id}, Имя: ${user.first_name}, Username: @${user.username}`;
-    document.getElementById("user-info").innerText = userInfo;
+    data = await fetchGetInfo(user.id, LOT_ID);
+    document.getElementById(
+      "user-info"
+    ).innerText = `${data[0]} ${data[1]} ${data[2]}`;
   } else {
-    document.getElementById("user-info").innerText =
-      "Информация о пользователе недоступна.";
+    document.getElementById("user-info").innerText = "данных нет";
   }
 } else {
   document.getElementById("user-info").innerText =
